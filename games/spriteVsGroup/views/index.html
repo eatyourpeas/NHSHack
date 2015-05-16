@@ -1,0 +1,178 @@
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Phaser Example Runner</title>
+  <meta name="viewport" content="initial-scale=1 maximum-scale=1 user-scalable=0 minimal-ui">
+  <script src="http://examples.phaser.io/_site/js/jquery-2.0.3.min.js" type="text/javascript"></script>
+  <script src="http://examples.phaser.io/_site/phaser/phaser.2.3.0.min.js" type="text/javascript"></script>
+  <script src="http://examples.phaser.io/_site/phaser/blob.js" type="text/javascript"></script>
+  <script src="http://examples.phaser.io/_site/phaser/canvas-to-blob.js" type="text/javascript"></script>
+  <script src="http://examples.phaser.io/_site/phaser/filesaver.js" type="text/javascript"></script>
+  <script src="http://examples.phaser.io/_site/phaser/embed.js" type="text/javascript"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial;
+      font-size: 14px;
+      background-color: #000000;
+      color: #fff;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="phaser-example">
+
+  </div>
+
+  <script type="text/javascript">
+    var IDE_HOOK = false;
+    var test;
+    var points = 0;
+
+
+    var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', {
+      preload: preload,
+      create: create,
+      update: update
+    });
+
+    function preload() {
+
+      game.load.image('ship', 'player.png');
+      game.load.image('rice', 'rice.png');
+      game.load.image('orange', 'orange.png');
+      game.load.image('veggies', 'fruitnveg32wh37.png', 32, 32);
+
+    }
+
+    var sprite;
+    var cursors;
+    var carbs;
+    var nonCarbs;
+    var text;
+
+    function create() {
+
+      text = game.add.text(5, 5, 'Points: 0', {
+        fill: '#ffffff',
+        font: '14pt Arial'
+      });
+
+      //  Enable P2
+      game.physics.startSystem(Phaser.Physics.P2JS);
+
+      //  Turn on impact events for the world, without this we get no collision callbacks
+      game.physics.p2.setImpactEvents(true);
+
+      game.physics.p2.restitution = 0.8;
+
+      //  Create our collision groups. One for the player, one for the pandas
+      var playerCollisionGroup = game.physics.p2.createCollisionGroup();
+      var carbsCollisionGroup = game.physics.p2.createCollisionGroup();
+      var nonCarbsCollisionGroup = game.physics.p2.createCollisionGroup();
+
+      //  This part is vital if you want the objects with their own collision groups to still collide with the world bounds
+      //  (which we do) - what this does is adjust the bounds to use its own collision group.
+      game.physics.p2.updateBoundsCollisionGroup();
+
+      carbs = game.add.group();
+      carbs.enableBody = true;
+      carbs.physicsBodyType = Phaser.Physics.P2JS;
+
+      nonCarbs = game.add.group();
+      nonCarbs.enableBody = true;
+      nonCarbs.physicsBodyType = Phaser.Physics.P2JS;
+
+      for (var i = 0; i < 4; i++) {
+        var rice = carbs.create(game.world.randomX, game.world.randomY, 'rice');
+        rice.body.setRectangle(40, 40);
+        rice.width = 40;
+        rice.height = 40;
+        rice.body.setCollisionGroup(carbsCollisionGroup);
+        rice.body.collides([nonCarbsCollisionGroup, carbsCollisionGroup, playerCollisionGroup]);
+      }
+
+      for (var i = 0; i < 4; i++) {
+        var orange = nonCarbs.create(game.world.randomX, game.world.randomY, 'orange');
+        orange.body.setRectangle(40, 40);
+        orange.width = 40;
+        orange.height = 40;
+        orange.body.setCollisionGroup(nonCarbsCollisionGroup);
+        orange.body.collides([carbsCollisionGroup, nonCarbsCollisionGroup, playerCollisionGroup]);
+      }
+
+      //  Create our ship sprite
+      ship = game.add.sprite(200, 200, 'ship');
+      ship.scale.set(0.2);
+      ship.smoothed = false;
+      ship.animations.add('fly', [0, 1, 2, 3, 4, 5], 10, true);
+      ship.play('fly');
+
+      game.physics.p2.enable(ship, false);
+      ship.body.setRectangle(114, 86);
+      ship.body.fixedRotation = true;
+
+      //  Set the ships collision group
+      ship.body.setCollisionGroup(playerCollisionGroup);
+
+      //  The ship will collide with the pandas, and when it strikes one the hitPanda callback will fire, causing it to alpha out a bit
+      //  When pandas collide with each other, nothing happens to them.
+      ship.body.collides(carbsCollisionGroup, hitPanda, this);
+      ship.body.collides(nonCarbsCollisionGroup, hitPanda, this);
+
+      game.camera.follow(ship);
+
+      cursors = game.input.keyboard.createCursorKeys();
+
+    }
+
+    function hitPanda(body1, body2) {
+
+
+
+    }
+
+    function update() {
+
+      ship.body.setZeroVelocity();
+
+      points = carbs.children.map(function(item) {
+        return item.x > game.width / 2;
+      }).concat(nonCarbs.children.map(function(item) {
+        return item.x < game.width / 2;
+      })).filter(function(a) {
+        return a
+      }).length;
+
+      text.setText('Points: ' + points);
+
+      if (cursors.left.isDown) {
+        ship.body.moveLeft(200);
+      } else if (cursors.right.isDown) {
+        ship.body.moveRight(200);
+      }
+
+      if (cursors.up.isDown) {
+        ship.body.moveUp(200);
+      } else if (cursors.down.isDown) {
+        ship.body.moveDown(200);
+      }
+
+      if (!game.camera.atLimit.x) {
+        starfield.tilePosition.x += (ship.body.velocity.x * 16) * game.time.physicsElapsed;
+      }
+
+      if (!game.camera.atLimit.y) {
+        starfield.tilePosition.y += (ship.body.velocity.y * 16) * game.time.physicsElapsed;
+      }
+
+    }
+  </script>
+
+
+</body>
+
+</html>
