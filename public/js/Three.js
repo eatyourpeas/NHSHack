@@ -371,6 +371,11 @@ Game.Three.prototype.create = function() {
   });
   carbCount.anchor.setTo(0.5, 0.5);
   carbCount.alpha = 0;
+
+  showInstructions.call(
+	this,
+    "Jamie has strayed into Galactose, the asteroid belt. Collect the carbs to gain points.\nCareful though... you have to pick up the insulin first.\n\nUse the LEFT ARROW to activate the insulin forcefield. If you forget, the blood sugar will rise.."
+  );
 }
 
 var hitPanda = debounce(function(body1, body2) {
