@@ -421,7 +421,7 @@ Game.Three.prototype.update = function() {
   });
 
   if (bsLevel == 4) {
-    alert('Dead.');
+	window.location.reload();
   }
 
   bsDial.loadTexture(bsLevels[bsLevel]);
