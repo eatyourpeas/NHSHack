@@ -6,17 +6,18 @@
   <meta name="viewport" content="initial-scale=1 maximum-scale=1 user-scalable=0 minimal-ui">
   <script src="http://examples.phaser.io/_site/js/jquery-2.0.3.min.js" type="text/javascript"></script>
   <script src="http://examples.phaser.io/_site/phaser/phaser.2.3.0.min.js" type="text/javascript"></script>
+  <script src="/js/ScreenShake.js" type="text/javascript"></script>
   <script src="http://examples.phaser.io/_site/phaser/blob.js" type="text/javascript"></script>
   <script src="http://examples.phaser.io/_site/phaser/canvas-to-blob.js" type="text/javascript"></script>
   <script src="http://examples.phaser.io/_site/phaser/filesaver.js" type="text/javascript"></script>
   <script src="http://examples.phaser.io/_site/phaser/embed.js" type="text/javascript"></script>
 
-	<!-- Game stages -->
-	<script src="/js/Boot.js" type="text/javascript"></script>
-	<script src="/js/Menu.js" type="text/javascript"></script>
-	<script src="/js/One.js" type="text/javascript"></script>
-	<script src="/js/Two.js" type="text/javascript"></script>
-	<script src="/js/Three.js" type="text/javascript"></script>
+  <!-- Game stages -->
+  <script src="/js/Boot.js" type="text/javascript"></script>
+  <script src="/js/Menu.js" type="text/javascript"></script>
+  <script src="/js/One.js" type="text/javascript"></script>
+  <script src="/js/Two.js" type="text/javascript"></script>
+  <script src="/js/Three.js" type="text/javascript"></script>
 
   <style>
     body {
@@ -36,18 +37,19 @@
   </div>
 
   <script type="text/javascript">
-		var IDE_HOOK = false;
-		var game = new Phaser.Game(1200, 600, Phaser.AUTO, 'game-stage');
+    var IDE_HOOK = false;
+    var game = new Phaser.Game(1200, 600, Phaser.AUTO, 'game-stage');
 
-		game.state.add('Boot', Game.Boot);
-		game.state.add('Menu', Game.Menu);
-		game.state.add('One', Game.One);
-		game.state.add('Three', Game.Three);
-		game.state.add('Invaders', Game.Invaders);
+    game.state.add('Boot', Game.Boot);
+    game.state.add('Menu', Game.Menu);
+    game.state.add('One', Game.One);
+    game.state.add('Three', Game.Three);
+    game.state.add('Invaders', Game.Invaders);
 
-		game.state.start('Boot');
-	</script>
+    game.state.start('Boot');
+  </script>
 
+  <audio src='music.mp3' autoplay loop='loop'></audio>
 
 </body>
 
