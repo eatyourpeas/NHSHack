@@ -53,6 +53,10 @@ Game.Boot.prototype = {
 		});
 
 		this.add.image(this.world.width/2, 250, 'commander');
+		var entertext = game.add.text(this.world.width/2, 550, 'Press ENTER to continue', {
+			fill: '#ffffff',
+			font: '16pt Arial',
+		});
 
 		var enterKey = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
 		enterKey.onUp.add(function(){
