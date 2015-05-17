@@ -162,6 +162,8 @@
     game.camera.follow(ship);
 
     cursors = game.input.keyboard.createCursorKeys();
+
+	showInstructions.call(this, "Put the carbs into the Carb-inator.\nCareful though - it can't eat anything else!");
   }
 
   function hitPanda() {}
