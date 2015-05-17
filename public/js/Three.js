@@ -37,11 +37,9 @@ Game.Three.prototype.preload = function() {
   this.load.image('needle', 'needle.png');
 
   //BS Dials
-  this.load.image('verylow', 'verylow.png');
-  this.load.image('low', 'low.png');
   this.load.image('normal', 'normal.png');
+  this.load.image('ketone', 'ketone.png');
   this.load.image('high', 'high.png');
-  this.load.image('veryhigh', 'veryhigh.png');
 
   //CARBS
   this.load.image('rice', 'rice.png');
@@ -64,6 +62,7 @@ Game.Three.prototype.preload = function() {
   this.load.image('sausage', 'sausage.png');
 }
 
+var score = 0;
 var ckCollisionGroup;
 var carbsCollisionGroup;
 var nonCarbsCollisionGroup;
@@ -77,7 +76,7 @@ var text;
 var carbonator;
 var starfield;
 var insulin = 0;
-var bsLevel = 2;
+var bsLevel = 0;
 var keytones;
 var bsDial;
 var fire;
@@ -85,12 +84,11 @@ var use;
 var up;
 var down;
 var bsLevels = [
-  'verylow',
-  'low',
   'normal',
   'high',
-  'veryhigh'
+  'ketone'
 ];
+var difficulty = 1;
 
 var carbImages = [{
   label: 'rice',
@@ -114,7 +112,7 @@ var carbImages = [{
   label: 'cake',
   carbs: 0
 }, {
-  label: 'crips',
+  label: 'crisps',
   carbs: 0
 }];
 var nonCarbImages = ['orange', 'salad', 'fish', 'borccoli', 'eggs', 'cheese', 'banana', 'sausage'];
@@ -133,6 +131,14 @@ setInterval(function() {
 }, 2000);
 
 Game.Three.prototype.create = function() {
+
+  stateText = game.add.text(game.world.centerX, game.world.centerY, ' ', {
+    font: '84px Arial',
+    fill: '#fff'
+  });
+  stateText.anchor.setTo(0.5, 0.5);
+  stateText.visible = false;
+
   var background = this.add.tileSprite(
     0,
     0,
@@ -217,26 +223,28 @@ Game.Three.prototype.create = function() {
       var carb = carbs.create(ck.x - 100, ck.y, image.label);
       carb.body.setRectangle(50, 20);
       carb.width = 50;
-      carb.height = 20;
+      carb.height = 50;
       carb.carbs = 1;
       carb.name = 'carb';
-      carb.body.velocity.x = -1000
+      carb.outOfBoundsKill = true;
+      carb.body.velocity.x = -(100*Math.min(difficulty, 3))
       carb.body.setCollisionGroup(carbsCollisionGroup);
       carb.body.collides([nonCarbsCollisionGroup, carbsCollisionGroup, playerCollisionGroup]);
       ckShoot();
-    }, Math.random() * 2000)
+      difficulty += Math.min(Math.random()*0.02, 5)
+    }, Math.random() * (2000 / difficulty))
   }
   ckShoot();
 
   var randPlace = function() {
     setTimeout(function() {
       var nonCarb = nonCarbs.create(ck.x - 100, ck.y, 'needle');
-      nonCarb.body.setRectangle(50, 20);
-      nonCarb.width = 50;
-      nonCarb.height = 20;
+      nonCarb.body.setRectangle(110, 100);
+      nonCarb.width = 110;
+      nonCarb.height = 100;
       nonCarb.carbs = -1;
       nonCarb.name = 'needle';
-      nonCarb.body.velocity.x = -500
+      nonCarb.body.velocity.x = -(100*Math.min(difficulty, 3))
       nonCarb.body.setCollisionGroup(nonCarbsCollisionGroup);
       nonCarb.body.collides([nonCarbsCollisionGroup, carbsCollisionGroup, playerCollisionGroup]);
       randPlace();
@@ -316,7 +324,7 @@ Game.Three.prototype.create = function() {
     up = false;
   });
 
-  buttonup = this.add.button(400, this.height - 200, 'buttonvertical', null, this, 0, 1, 0, 1);
+  buttonup = this.add.button(400, game.height - 200, 'buttonvertical', null, this, 0, 1, 0, 1);
   buttonup.fixedToCamera = true;
   buttonup.events.onInputOver.add(function() {
     down = true;
@@ -331,17 +339,48 @@ Game.Three.prototype.create = function() {
     down = false;
   });
 
+  bsDial = game.add.image(300, game.height, bsLevels[bsLevel]);
+  bsDial.scale.set(0.5)
+  bsDial.anchor.set(1, 1)
+
+
+  insulinImages = Array(5).join(',').split(',').map(function(value, index){
+    image = game.add.image((120*index)+20, 100, bsLevels[bsLevel]);
+    image.scale.set(0.5)
+    image.anchor.set(1, 1)
+    image.visble = false;
+    return image;
+  });
+
+
+
+
 }
 
 var hitPanda = debounce(function(body1, body2) {
   body2.sprite.kill();
-  if (body2.sprite.name == 'carb')
-    bsLevel = Math.min(bsLevel + 1, 4);
+  if (body2.sprite.name == 'carb') {
+    bsLevel++;
+    score += body2.sprite.carbs;
+  }
   if (body2.sprite.name == 'needle')
-    insulin++;
+    insulin = Math.min(insulin+1, 4);
 }, 10)
 
 Game.Three.prototype.update = function() {
+
+  insulinImages.filter(function(value, index){
+    return index+1<insulin;
+  }).forEach(function(value){
+    value.visible = true;
+  });
+
+  if (bsLevel == 4) {
+    stateText.text = "You scored: " + score;
+    stateText.visible = true;
+  }
+
+  bsDial.loadTexture(bsLevels[bsLevel]);
 
   ship.body.x = 100
 
@@ -352,22 +391,6 @@ Game.Three.prototype.update = function() {
     if (Date.now() - lastuse > 300) {
       lastuse = Date.now();
       useInsulin();
-    }
-  } else if (cursors.right.isDown || fire) {
-    lastfire = lastfire || Date.now()
-    if (Date.now() - lastfire > 300) {
-      lastfire = Date.now();
-
-      var nonCarb = nonCarbs.create(ship.x - 100, ship.y, 'needle');
-      nonCarb.body.setRectangle(50, 20);
-      nonCarb.width = 50;
-      nonCarb.height = 20;
-      nonCarb.carbs = -1;
-      nonCarb.name = 'needle';
-      nonCarb.body.velocity.x = 1500
-      nonCarb.body.setCollisionGroup(nonCarbsCollisionGroup);
-      nonCarb.body.collides([nonCarbsCollisionGroup, carbsCollisionGroup, ckCollisionGroup]);
-
     }
   }
 
