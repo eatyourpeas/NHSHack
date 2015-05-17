@@ -172,8 +172,10 @@ function carbonatorHit(body1, body2) {
     carb: 1,
     nonCarb: -1
   }[body2.sprite.name]
-  if (carbs.countLiving() == 0)
-    alert('Winning! ' + points);
+  if (carbs.countLiving() == 0){
+    Game.levelProgress++;
+    this.state.start('Menu');
+  }
 }
 
 Game.One.prototype.update = function() {

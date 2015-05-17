@@ -36,7 +36,7 @@ var levels = [
 	},
 ];
 
-var levelProgress = 1;
+Game.levelProgress = 0;
 
 Game.Menu = function(game){
 
@@ -58,7 +58,16 @@ Game.Menu.prototype = {
 	},
 
 	create: function(){
+		levelProgress = Game.levelProgress;
 		var that = this;
+
+		//if levelProgress is more than the number of levels, you have won!
+		console.log(levelProgress, levels.length);
+		if(levelProgress >= levels.length - 1){
+			this.state.start('Winner');
+			return;
+		}
+
 		//place each planet
 		var planets = levels.map(function(item, index){
 			var imageName = (index <= levelProgress) ? item.name : item.name + '_grey';
