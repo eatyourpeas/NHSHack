@@ -1,0 +1,427 @@
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Phaser Example Runner</title>
+  <meta name="viewport" content="initial-scale=1 maximum-scale=1 user-scalable=0 minimal-ui">
+  <script src="http://examples.phaser.io/_site/js/jquery-2.0.3.min.js" type="text/javascript"></script>
+  <script src="http://examples.phaser.io/_site/phaser/phaser.2.3.0.min.js" type="text/javascript"></script>
+  <script src="http://examples.phaser.io/_site/phaser/blob.js" type="text/javascript"></script>
+  <script src="http://examples.phaser.io/_site/phaser/canvas-to-blob.js" type="text/javascript"></script>
+  <script src="http://examples.phaser.io/_site/phaser/filesaver.js" type="text/javascript"></script>
+  <script src="http://examples.phaser.io/_site/phaser/embed.js" type="text/javascript"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial;
+      font-size: 14px;
+      background-color: #000000;
+      color: #fff;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="phaser-example">
+
+  </div>
+
+  <script type="text/javascript">
+    function debounce(func, wait, immediate) {
+      var timeout;
+      return function() {
+        var context = this,
+          args = arguments;
+        var later = function() {
+          timeout = null;
+          if (!immediate) func.apply(context, args);
+        };
+        var callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+      };
+    };
+
+    var IDE_HOOK = false;
+    var test;
+    var points = 0;
+
+    var game = new Phaser.Game(1200, 600, Phaser.AUTO, 'phaser-example', {
+      preload: preload,
+      create: create,
+      update: update
+    });
+
+    function preload() {
+
+      game.load.spritesheet('buttonvertical', 'button-vertical.png', 64, 64);
+      game.load.spritesheet('buttonhorizontal', 'button-horizontal.png', 96, 64);
+      game.load.spritesheet('buttondiagonal', 'button-diagonal.png', 64, 64);
+      game.load.spritesheet('buttonfire', 'button-round-a.png', 96, 96);
+      game.load.spritesheet('buttonjump', 'button-round-b.png', 96, 96);
+
+      game.load.image('stars', 'starfield.jpg');
+      game.load.image('ship', 'player.png');
+      game.load.image('commanderkeytone', 'commanderkeytone.png');
+      game.load.image('carbonator', 'pipe.png');
+      game.load.image('needle', 'needle.png');
+
+      //BS Dials
+      game.load.image('verylow', 'verylow.png');
+      game.load.image('low', 'low.png');
+      game.load.image('normal', 'normal.png');
+      game.load.image('high', 'high.png');
+      game.load.image('veryhigh', 'veryhigh.png');
+
+      //CARBS
+      game.load.image('rice', 'rice.png');
+      game.load.image('peanut', 'peanut.png');
+      game.load.image('cornflakes', 'cornflakes.png');
+      game.load.image('pasta', 'pasta.png');
+      game.load.image('corn', 'corn.png');
+      game.load.image('bread', 'bread.png');
+      game.load.image('cake', 'cake.png');
+      game.load.image('crisps', 'crisps.png');
+
+      //NONCARBS
+      game.load.image('orange', 'orange.png');
+      game.load.image('salad', 'salad.png');
+      game.load.image('fish', 'fish.png');
+      game.load.image('broccoli', 'broccoli.png');
+      game.load.image('cheese', 'cheese.png');
+      game.load.image('eggs', 'eggs.png');
+      game.load.image('banana', 'banana.png');
+      game.load.image('sausage', 'sausage.png');
+    }
+
+    var ckCollisionGroup;
+    var carbsCollisionGroup;
+    var nonCarbsCollisionGroup;
+    var lastfire;
+    var lastuse;
+    var sprite;
+    var cursors;
+    var carbs;
+    var nonCarbs;
+    var text;
+    var carbonator;
+    var starfield;
+    var insulin = 0;
+    var bsLevel = 2;
+    var keytones;
+    var bsDial;
+    var fire;
+    var use;
+    var up;
+    var down;
+    var bsLevels = [
+      'verylow',
+      'low',
+      'normal',
+      'high',
+      'veryhigh'
+    ];
+
+    var carbImages = [{
+      label: 'rice',
+      carbs: 0
+    }, {
+      label: 'peanut',
+      carbs: 0
+    }, {
+      label: 'cornflakes',
+      carbs: 0
+    }, {
+      label: 'pasta',
+      carbs: 0
+    }, {
+      label: 'corn',
+      carbs: 0
+    }, {
+      label: 'bread',
+      carbs: 0
+    }, {
+      label: 'cake',
+      carbs: 0
+    }, {
+      label: 'crips',
+      carbs: 0
+    }];
+    var nonCarbImages = ['orange', 'salad', 'fish', 'borccoli', 'eggs', 'cheese', 'banana', 'sausage'];
+
+    var useInsulin = function() {
+      if (insulin) {
+        insulin--;
+        bsLevel--;
+        keytones--;
+      }
+    };
+
+    setInterval(function() {
+      if (bsLevel == 4)
+        keytones++;
+    }, 2000);
+
+    function create() {
+      if (!game.device.desktop) {
+        game.input.onDown.add(gofull, this);
+      }
+      var background = game.add.tileSprite(
+        0,
+        0,
+        1280,
+        720,
+        'stars'
+      );
+
+      // Scroll
+      background.autoScroll(-400,
+        0
+      );
+
+      //starfield = game.add.tileSprite(0, 0, 800, 600, 'stars');
+      //starfield.fixedToCamera = true;
+      //  Enable P2
+      game.physics.startSystem(Phaser.Physics.P2JS);
+
+      //  Turn on impact events for the world, without this we get no collision callbacks
+      game.physics.p2.setImpactEvents(true);
+
+      game.physics.p2.restitution = 0.8;
+
+      //  Create our collision groups. One for the player, one for the pandas
+      playerCollisionGroup = game.physics.p2.createCollisionGroup();
+      carbsCollisionGroup = game.physics.p2.createCollisionGroup();
+      nonCarbsCollisionGroup = game.physics.p2.createCollisionGroup();
+      ckCollisionGroup = game.physics.p2.createCollisionGroup();
+
+      //  This part is vital if you want the objects with their own collision groups to still collide with the world bounds
+      //  (which we do) - what this does is adjust the bounds to use its own collision group.
+      //game.physics.p2.updateBoundsCollisionGroup();
+
+      carbs = game.add.group();
+      carbs.enableBody = true;
+      carbs.physicsBodyType = Phaser.Physics.P2JS;
+
+      nonCarbs = game.add.group();
+      nonCarbs.enableBody = true;
+      nonCarbs.physicsBodyType = Phaser.Physics.P2JS;
+
+      /*for (var i = 0; i < 4; i++) {
+        var image = carbImages[Math.floor(Math.random() * carbImages.length)];
+        var rice = carbs.create(game.rnd.integerInRange(100, 400), game.rnd.integerInRange(0, 570), image.label);
+        rice.body.setRectangle(40, 40);
+        rice.name = 'carb'
+        rice.carbs = image.carbs;
+        rice.width = 40;
+        rice.height = 40;
+        rice.body.setCollisionGroup(carbsCollisionGroup);
+        rice.body.collides([nonCarbsCollisionGroup, carbsCollisionGroup, playerCollisionGroup, carbonatorCollisionGroup]);
+      }
+
+      for (var i = 0; i < 4; i++) {
+        var image = nonCarbImages[Math.floor(Math.random() * nonCarbImages.length)];
+        var orange = nonCarbs.create(game.rnd.integerInRange(100, 400), game.rnd.integerInRange(0, 570), image);
+        orange.body.setRectangle(40, 40);
+        orange.name = 'nonCarb';
+        orange.width = 40;
+        orange.height = 40;
+        orange.body.setCollisionGroup(nonCarbsCollisionGroup);
+        orange.body.collides([carbsCollisionGroup, nonCarbsCollisionGroup, playerCollisionGroup, carbonatorCollisionGroup]);
+      }*/
+
+      //  Create our ship sprite
+      ship = game.add.sprite(100, 200, 'ship');
+      ship.scale.set(0.2);
+      ship.smoothed = true;
+      ship.animations.add('fly', [0, 1, 2, 3, 4, 5], 10, true);
+      ship.play('fly');
+
+      ck = game.add.sprite(game.width - 200, -100, 'commanderkeytone');
+      ck.scale.set(0.4);
+      ck.smoothed = true;
+      var tween = game.add.tween(ck).to({
+        y: game.height + 100
+      }, 2000, Phaser.Easing.Linear.None, true, 0, false).start();
+
+      var ckShoot = function() {
+        setTimeout(function() {
+          var image = carbImages[Math.floor(Math.random() * carbImages.length)];
+          var carb = carbs.create(ck.x - 100, ck.y, image.label);
+          carb.body.setRectangle(50, 20);
+          carb.width = 50;
+          carb.height = 20;
+          carb.carbs = 1;
+          carb.name = 'carb';
+          carb.body.velocity.x = -1000
+          carb.body.setCollisionGroup(carbsCollisionGroup);
+          carb.body.collides([nonCarbsCollisionGroup, carbsCollisionGroup, playerCollisionGroup]);
+          ckShoot();
+        }, Math.random() * 2000)
+      }
+      ckShoot();
+
+      var randPlace = function() {
+        setTimeout(function() {
+          var nonCarb = nonCarbs.create(ck.x - 100, ck.y, 'needle');
+          nonCarb.body.setRectangle(50, 20);
+          nonCarb.width = 50;
+          nonCarb.height = 20;
+          nonCarb.carbs = -1;
+          nonCarb.name = 'needle';
+          nonCarb.body.velocity.x = -500
+          nonCarb.body.setCollisionGroup(nonCarbsCollisionGroup);
+          nonCarb.body.collides([nonCarbsCollisionGroup, carbsCollisionGroup, playerCollisionGroup]);
+          randPlace();
+        }, Math.random() * 2000)
+      }
+      randPlace();
+
+
+      game.physics.p2.enable(ship, false);
+      ship.body.setRectangle(114, 86);
+      ship.body.fixedRotation = true;
+
+      //  Set the ships collision group
+      ship.body.setCollisionGroup(playerCollisionGroup);
+
+      //  The ship will collide with the pandas, and when it strikes one the hitPanda callback will fire, causing it to alpha out a bit
+      //  When pandas collide with each other, nothing happens to them.
+      ship.body.collides(carbsCollisionGroup, hitPanda, this);
+      ship.body.collides(nonCarbsCollisionGroup, hitPanda, this);
+
+
+
+      game.camera.follow(ship);
+
+      cursors = game.input.keyboard.createCursorKeys();
+
+      bsDial = game.add.image(100, 100, 'normal');
+      bsDial.anchor.set(1, 1)
+      bsDial.x = 200;
+      bsDial.y = game.height
+      bsDial.scale.set(0.5)
+
+
+      buttonjump = game.add.button(600, 500, 'buttonjump', null, this, 0, 1, 0, 1); //game, x, y, key, callback, callbackContext, overFrame, outFrame, downFrame, upFrame
+      buttonjump.fixedToCamera = true; //our buttons should stay on the same place
+      buttonjump.events.onInputOver.add(function() {
+        use = true;
+      });
+      buttonjump.events.onInputOut.add(function() {
+        use = false;
+      });
+      buttonjump.events.onInputDown.add(function() {
+        use = true;
+      });
+      buttonjump.events.onInputUp.add(function() {
+        use = false;
+      });
+
+      buttonfire = game.add.button(700, 500, 'buttonfire', null, this, 0, 1, 0, 1);
+      buttonfire.fixedToCamera = true;
+      buttonfire.events.onInputOver.add(function() {
+        fire = true;
+      });
+      buttonfire.events.onInputOut.add(function() {
+        fire = false;
+      });
+      buttonfire.events.onInputDown.add(function() {
+        fire = true;
+      });
+      buttonfire.events.onInputUp.add(function() {
+        fire = false;
+      });
+
+
+      buttonup = game.add.button(400, 536, 'buttonvertical', null, this, 0, 1, 0, 1);
+      buttonup.fixedToCamera = true;
+      buttonup.events.onInputOver.add(function() {
+        up = true;
+      });
+      buttonup.events.onInputOut.add(function() {
+        up = false;
+      });
+      buttonup.events.onInputDown.add(function() {
+        up = true;
+      });
+      buttonup.events.onInputUp.add(function() {
+        up = false;
+      });
+
+      buttonup = game.add.button(400, game.height - 200, 'buttonvertical', null, this, 0, 1, 0, 1);
+      buttonup.fixedToCamera = true;
+      buttonup.events.onInputOver.add(function() {
+        down = true;
+      });
+      buttonup.events.onInputOut.add(function() {
+        down = false;
+      });
+      buttonup.events.onInputDown.add(function() {
+        down = true;
+      });
+      buttonup.events.onInputUp.add(function() {
+        down = false;
+      });
+
+
+
+
+    }
+
+    var hitPanda = debounce(function(body1, body2) {
+      body2.sprite.kill();
+      if (body2.sprite.name == 'carb')
+        bsLevel = Math.min(bsLevel + 1, 4);
+      if (body2.sprite.name == 'needle')
+        insulin++;
+    }, 10)
+
+    function update() {
+
+      ship.body.x = 100
+
+      ship.body.setZeroVelocity();
+
+      if (cursors.left.isDown || use) {
+        lastuse = lastuse||Date.now()
+        if(Date.now()-lastuse>300) {
+          lastuse = Date.now();
+          useInsulin();
+        }
+      } else if (cursors.right.isDown || fire) {
+        lastfire = lastfire||Date.now()
+        if(Date.now()-lastfire>300) {
+          lastfire = Date.now();
+
+          var nonCarb = nonCarbs.create(ship.x - 100, ship.y, 'needle');
+          nonCarb.body.setRectangle(50, 20);
+          nonCarb.width = 50;
+          nonCarb.height = 20;
+          nonCarb.carbs = -1;
+          nonCarb.name = 'needle';
+          nonCarb.body.velocity.x = 1500
+          nonCarb.body.setCollisionGroup(nonCarbsCollisionGroup);
+          nonCarb.body.collides([nonCarbsCollisionGroup, carbsCollisionGroup, ckCollisionGroup]);
+
+        }
+      }
+
+      if (cursors.up.isDown || down) {
+        ship.body.moveUp(400);
+      } else if (cursors.down.isDown || up) {
+        ship.body.moveDown(400);
+      }
+
+      bsDial.loadTexture(bsLevels[bsLevel])
+
+
+    }
+  </script>
+
+
+</body>
+
+</html>
