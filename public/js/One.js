@@ -134,4 +134,3 @@ Game.Sorter.prototype.update = function () {
   }
 
 }
-

@@ -78,7 +78,7 @@ Game.Menu.prototype = {
 
 			setTimeout(function(){
 				console.log("go to next level: levelProgress+1");
-				that.state.start('Sorter');
+				that.state.start('Three');
 			}, 500);
 		}, this);
 		move.start();
@@ -87,5 +87,5 @@ Game.Menu.prototype = {
 
 	update: function(){
 
-	},
+	}
 };
