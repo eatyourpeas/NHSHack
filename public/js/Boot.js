@@ -1,5 +1,30 @@
 var Game = {};
 
+var showInstructions = function(text){
+
+	var pig = this.add.sprite(-300, 0, 'pig');
+	var entertext = this.add.text(400, 50, text, {
+		fill: '#ffffff',
+		font: '24pt Arial',
+		wordWrap: true,
+		wordWrapWidth: 500,
+	});
+	entertext.visible = false;
+	var tween = this.add.tween(pig).to({x: 0}, 200);
+	tween.onComplete.add(function(){
+		entertext.visible = true
+		game.paused = true;
+	}, this);
+	tween.start();
+
+
+	document.onkeyup = function(event){
+		game.paused = false;
+		pig.kill();
+		entertext.kill();
+	};
+};
+
 Game.Boot = function(game){
 
 };
@@ -34,6 +59,7 @@ Game.Boot.prototype = {
 		this.load.image('player', 'player.png');
 		this.load.image('stars', 'starfield.jpg');
 		this.load.image('commander', 'commanderkeytone.png');
+		this.load.image('pig', 'pig.png');
 	},
 
 	create: function(){
