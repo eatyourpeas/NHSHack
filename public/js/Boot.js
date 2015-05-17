@@ -1,6 +1,6 @@
 var Game = {};
 
-var showInstructions = function(text){
+var showInstructions = function(text, callback){
 
 	var pig = this.add.sprite(-300, 0, 'pig');
 	var entertext = this.add.text(400, 50, text, {
@@ -14,6 +14,7 @@ var showInstructions = function(text){
 	tween.onComplete.add(function(){
 		entertext.visible = true
 		game.paused = true;
+		if(callback) callback.call(this);
 	}, this);
 	tween.start();
 
