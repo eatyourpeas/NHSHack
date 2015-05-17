@@ -1,90 +1,71 @@
+(function(Game){
 
-<!doctype html>
-<html>
-    <head>
-        <meta charset="UTF-8" />
-        <title>Phaser Example Runner</title>
-        <meta name="viewport" content="initial-scale=1 maximum-scale=1 user-scalable=0 minimal-ui" />
-        <script src="http://examples.phaser.io/_site/js/jquery-2.0.3.min.js" type="text/javascript"></script> <script src="http://examples.phaser.io/_site/phaser/phaser.2.3.0.min.js" type="text/javascript"></script> <script src="http://examples.phaser.io/_site/phaser/blob.js" type="text/javascript"></script> <script src="http://examples.phaser.io/_site/phaser/canvas-to-blob.js" type="text/javascript"></script> <script src="http://examples.phaser.io/_site/phaser/filesaver.js" type="text/javascript"></script> <script src="http://examples.phaser.io/_site/phaser/embed.js" type="text/javascript"></script>
-        <style>
-            body {
-                margin: 0;
-                padding: 0;
-                font-family: Arial;
-                font-size: 14px;
-                background-color: #000000;
-                color: #fff;
-            }
-        </style>
-    </head>
-    <body>
-        <div id="phaser-example"></div>
+Game.Two = function(game){};
 
-        <script type="text/javascript">
+var carbImages;
 
-        var IDE_HOOK = false;
+Game.Two.prototype.preload = function(){
+	var game = this;
 
-        function restart () {
+	game.load.image('bullet', '/insulin.png');
+	game.load.image('enemyBullet', '/enemy-bullet.png');
+	game.load.spritesheet('invader', '/invader32x32x4.png', 32, 32);
+	game.load.image('ship', '/player.png');
+	game.load.spritesheet('kaboom', '/explode.png', 128, 128);
+	game.load.image('starfield', '/starfield.png');
+	game.load.image('background', '/starfield.png');
 
-            //  A new level starts
-            
-            //resets the life count
-            lives.callAll('revive');
-            //  And brings the aliens back from the dead :)
-            aliens.removeAll();
-            for (var y = 0; y < 4; y++)
-            {
-                for (var x = 0; x < 10; x++)
-                {
-                    var alien = aliens.create(x * 48, y * 50, carbImages[Math.floor(Math.random() * carbImages.length)]);
-                    alien.scale.setTo(0.2,0.2)
-                    alien.anchor.setTo(0.5, 0.5);
-                    //alien.animations.add('fly', [ 0, 1, 2, 3 ], 20, true);
-                    alien.play('fly');
-                    alien.body.moves = false;
-                }
-            }
+//Carbs
+	game.load.image('rice', 'rice.png');
+	game.load.image('peanut', 'peanut.png');
+	game.load.image('cornflakes', 'cornflakes.png');
+	game.load.image('pasta', 'pasta.png');
+	game.load.image('corn', 'corn.png');
+	game.load.image('bread', 'bread (1).png');
+	game.load.image('cake', 'cake.png');
+	game.load.image('crisps', 'crisps.png');
 
-            aliens.x = 100;
-            aliens.y = 50;
+	carbImages = 'rice peanut cornflakes pasta corn bread cake crisps'.split(' ');
+};
 
-            //  All this does is basically start the invaders moving. Notice we're moving the Group they belong to, rather than the invaders directly.
-            //  When the tween loops it calls descend
-            game.add.tween(aliens).to( { x: 200 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true).onLoop.add(function descend() {
-                aliens.y += 10;
-            }, this);
+function restart () {
 
-            //revives the player
-            player.revive();
-            //hides the text
-            stateText.visible = false;
+	//  A new level starts
+	
+	//resets the life count
+	lives.callAll('revive');
+	//  And brings the aliens back from the dead :)
+	aliens.removeAll();
+	for (var y = 0; y < 4; y++)
+	{
+		for (var x = 0; x < 10; x++)
+		{
+			var alien = aliens.create(x * 48, y * 50, carbImages[Math.floor(Math.random() * carbImages.length)]);
+			alien.scale.setTo(0.2,0.2)
+			alien.anchor.setTo(0.5, 0.5);
+			//alien.animations.add('fly', [ 0, 1, 2, 3 ], 20, true);
+			alien.play('fly');
+			alien.body.moves = false;
+		}
+	}
 
-        }
+	aliens.x = 100;
+	aliens.y = 50;
+
+	//  All this does is basically start the invaders moving. Notice we're moving the Group they belong to, rather than the invaders directly.
+	//  When the tween loops it calls descend
+	game.add.tween(aliens).to( { x: 200 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true).onLoop.add(function descend() {
+		aliens.y += 10;
+	}, this);
+
+	//revives the player
+	player.revive();
+	//hides the text
+	stateText.visible = false;
+
+}
         
-var game = top.game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: function preload() {
-        game.load.image('bullet', '/insulin.png');
-        game.load.image('enemyBullet', '/enemy-bullet.png');
-        game.load.spritesheet('invader', '/invader32x32x4.png', 32, 32);
-        game.load.image('ship', '/player.png');
-        game.load.spritesheet('kaboom', '/explode.png', 128, 128);
-        game.load.image('starfield', '/starfield.png');
-        game.load.image('background', '/starfield.png');
-
-    //Carbs
-        game.load.image('rice', 'rice.png');
-        game.load.image('peanut', 'peanut.png');
-        game.load.image('cornflakes', 'cornflakes.png');
-        game.load.image('pasta', 'pasta.png');
-        game.load.image('corn', 'corn.png');
-        game.load.image('bread', 'bread (1).png');
-        game.load.image('cake', 'cake.png');
-        game.load.image('crisps', 'crisps.png');
-
-        carbImages = 'rice peanut cornflakes pasta corn bread cake crisps'.split(' ');
-
-    }, create: create, update: function update() {
-
-   
+Game.Two.prototype.update = function(){
 
     //  Scroll the background
     starfield.tilePosition.y += 2;
@@ -159,11 +140,14 @@ var game = top.game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', {
                 scoreText.text = scoreString + score;
 
                 enemyBullets.callAll('kill',this);
-                stateText.text = " You Won, \n Click to restart";
+                stateText.text = "You Won, Click to continue"
                 stateText.visible = true;
 
                 //the "click to restart" handler
-                game.input.onTap.addOnce(restart,this);
+                game.input.onTap.addOnce(function(){
+					Game.levelProgress++;
+					game.state.start('Menu');
+				},this);
             }
 
         }, null, this);
@@ -193,17 +177,20 @@ var game = top.game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', {
                 stateText.visible = true;
 
                 //the "click to restart" handler
-                game.input.onTap.addOnce(restart,this);
+                game.input.onTap.addOnce(function(){
+					Game.levelProgress = 0;
+					game.state.start('Boot');
+				} ,this);
             }
 
         }, null, this);
     }
 
-}, render: render });
+};
 
 var player, aliens, bullets, bulletTime = 0, cursors, fireButton, explosions, starfield, score = 0, scoreString = '', scoreText, lives, enemyBullet, firingTimer = 0, stateText, livingEnemies = [];
 
-function create() {
+Game.Two.prototype.create = function () {
 
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -317,8 +304,5 @@ function resetBullet (bullet) {
     bullet.kill();
 
 }
-        
-        </script>
 
-    </body>
-</html>
+})(Game);

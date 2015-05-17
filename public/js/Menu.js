@@ -1,7 +1,7 @@
 var levels = [
 	{
 		name: 'planet1',
-		gameType: 'One',
+		gameType: 'NOPLAY',
 		position:{
 			x: 10,
 			y: 500,
@@ -17,7 +17,7 @@ var levels = [
 	},
 	{
 		name: 'planet3',
-		gameType: 'Three',
+		gameType: 'Two',
 		position:{
 			x: 250,
 			y: 350
@@ -25,20 +25,22 @@ var levels = [
 	},
 	{
 		name: 'planet4',
-		gameType: 'One',
+		gameType: 'Three',
 		position:{
 			x: 400,
 			y: 300
 		}
 	},
+	/*
 	{
 		name: 'planet5',
-		gameType: 'Three',
+		gameType: 'T',
 		position:{
 			x: 500,
 			y: 200
 		}
 	},
+	*/
 ];
 
 Game.levelProgress = 0;
