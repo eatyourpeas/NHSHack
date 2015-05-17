@@ -17,7 +17,7 @@
     game.load.image('cornflakes', 'cornflakes.png');
     game.load.image('pasta', 'pasta.png');
     game.load.image('corn', 'corn.png');
-    game.load.image('bread', 'bread.png');
+    game.load.image('bread', 'bread (1).png');
     game.load.image('cake', 'cake.png');
     game.load.image('crisps', 'crisps.png');
 
