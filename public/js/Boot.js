@@ -31,9 +31,36 @@ Game.Boot.prototype = {
 	preload: function(){
 		//load all assets here
 		//this.load.image
+		this.load.image('player', 'player.png');
+		this.load.image('stars', 'starfield.jpg');
+		this.load.image('commander', 'commanderkeytone.png');
 	},
 
 	create: function(){
-		this.state.start('Menu');
+		var starfield = game.add.tileSprite(0, 0, 1200, 600, 'stars');
+		starfield.fixedToCamera = true;
+
+		this.add.image(0, 0, 'player');
+		var title = game.add.text(this.world.width/2, 25, 'Diab-eaties', {
+			fill: '#ffffff',
+			font: '34pt Arial'
+		});
+		var introtext = game.add.text(this.world.width/2, 100, 'Help Jamie the Space Giraffe through the Milky Way... \nWatch out for Captain Ketone', {
+			fill: '#ffffff',
+			font: '24pt Arial',
+			wordWrap: true,
+			wordWrapWidth: this.world.width/2,
+		});
+
+		this.add.image(this.world.width/2, 250, 'commander');
+		var entertext = game.add.text(this.world.width/2, 550, 'Press ENTER to continue', {
+			fill: '#ffffff',
+			font: '16pt Arial',
+		});
+
+		var enterKey = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
+		enterKey.onUp.add(function(){
+			this.state.start('Menu');
+		}, this);
 	},
 };

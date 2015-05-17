@@ -1,8 +1,10 @@
+(function(Game){
 Game.One = function(game) {};
 
 var points = 0;
 var game = Game.One;
 Game.One.prototype.preload = function() {
+  var game = this;
 
   game.load.image('stars', 'starfield.jpg');
   game.load.image('ship', 'player.png');
@@ -39,6 +41,7 @@ var carbonator;
 var starfield;
 
 Game.One.prototype.create = function() {
+  var game = this;
 
   var carbImages = [{
     label: 'rice',
@@ -169,8 +172,10 @@ function carbonatorHit(body1, body2) {
     carb: 1,
     nonCarb: -1
   }[body2.sprite.name]
-  if (carbs.countLiving() == 0)
-    alert('Winning! ' + points);
+  if (carbs.countLiving() == 0){
+    Game.levelProgress++;
+    this.state.start('Menu');
+  }
 }
 
 Game.One.prototype.update = function() {
@@ -194,3 +199,4 @@ Game.One.prototype.update = function() {
 
 
 }
+})(Game);

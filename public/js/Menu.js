@@ -1,6 +1,7 @@
 var levels = [
 	{
 		name: 'planet1',
+		gameType: 'One',
 		position:{
 			x: 10,
 			y: 500,
@@ -8,6 +9,7 @@ var levels = [
 	},
 	{
 		name: 'planet2',
+		gameType: 'One',
 		position:{
 			x: 150,
 			y: 450
@@ -15,6 +17,7 @@ var levels = [
 	},
 	{
 		name: 'planet3',
+		gameType: 'Three',
 		position:{
 			x: 250,
 			y: 350
@@ -22,6 +25,7 @@ var levels = [
 	},
 	{
 		name: 'planet4',
+		gameType: 'One',
 		position:{
 			x: 400,
 			y: 300
@@ -29,6 +33,7 @@ var levels = [
 	},
 	{
 		name: 'planet5',
+		gameType: 'Three',
 		position:{
 			x: 500,
 			y: 200
@@ -36,7 +41,7 @@ var levels = [
 	},
 ];
 
-var levelProgress = 1;
+Game.levelProgress = 0;
 
 Game.Menu = function(game){
 
@@ -58,7 +63,16 @@ Game.Menu.prototype = {
 	},
 
 	create: function(){
+		levelProgress = Game.levelProgress;
 		var that = this;
+
+		//if levelProgress is more than the number of levels, you have won!
+		console.log(levelProgress, levels.length);
+		if(levelProgress >= levels.length - 1){
+			this.state.start('Winner');
+			return;
+		}
+
 		//place each planet
 		var planets = levels.map(function(item, index){
 			var imageName = (index <= levelProgress) ? item.name : item.name + '_grey';
@@ -78,7 +92,7 @@ Game.Menu.prototype = {
 
 			setTimeout(function(){
 				console.log("go to next level: levelProgress+1");
-				that.state.start('Three');
+				that.state.start(levels[levelProgress+1].gameType);
 			}, 500);
 		}, this);
 		move.start();
