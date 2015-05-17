@@ -164,45 +164,19 @@
     cursors = game.input.keyboard.createCursorKeys();
   }
 
-  //  Create our ship sprite
-  ship = game.add.sprite(200, 200, 'ship');
-  ship.scale.set(0.2);
-  ship.smoothed = false;
-  ship.animations.add('fly', [0, 1, 2, 3, 4, 5], 10, true);
-  ship.play('fly');
+  function hitPanda() {}
 
-  game.physics.p2.enable(ship, false);
-  ship.body.setRectangle(114, 86);
-  ship.body.fixedRotation = true;
+  function carbonatorHit(body1, body2) {
+    body2.sprite.kill();
+    points += {
+      carb: 1,
+      nonCarb: -1
+    }[body2.sprite.name]
+    if (carbs.countLiving() == 0) {
+      Game.levelProgress++;
+      this.state.start('Menu');
+    }
 
-  //  Set the ships collision group
-  ship.body.setCollisionGroup(playerCollisionGroup);
-
-  //  The ship will collide with the pandas, and when it strikes one the hitPanda callback will fire, causing it to alpha out a bit
-  //  When pandas collide with each other, nothing happens to them.
-  ship.body.collides(carbsCollisionGroup, hitPanda, this);
-  ship.body.collides(nonCarbsCollisionGroup, hitPanda, this);
-
-  game.camera.follow(ship);
-
-  cursors = game.input.keyboard.createCursorKeys();
-
-  showInstructions.call(this, "Put the carbs into the Carb-inator.\nCareful though - it can't eat anything else!");
-}
-
-function hitPanda(){
-  console.log('Hi')
-}
-
-function carbonatorHit(body1, body2) {
-  body2.sprite.kill();
-  points += {
-    carb: 1,
-    nonCarb: -1
-  }[body2.sprite.name]
-  if (carbs.countLiving() == 0){
-    Game.levelProgress++;
-    this.state.start('Menu');
   }
 
   Game.One.prototype.update = function() {
