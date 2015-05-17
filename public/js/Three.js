@@ -439,9 +439,9 @@ Game.Three.prototype.update = function() {
   }
 
   if (cursors.up.isDown || down) {
-    ship.body.moveUp(400);
+    ship.body.moveUp(Math.min(400/bsLevel, 400));
   } else if (cursors.down.isDown || up) {
-    ship.body.moveDown(400);
+    ship.body.moveDown(Math.min(400/bsLevel, 400));
   }
 
   bsDial.loadTexture(bsLevels[bsLevel])

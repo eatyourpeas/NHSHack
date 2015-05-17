@@ -120,11 +120,11 @@
     for (var i = 0; i < 4; i++) {
       var image = carbImages[Math.floor(Math.random() * carbImages.length)];
       var rice = carbs.create(game.rnd.integerInRange(100, 400), game.rnd.integerInRange(0, 570), image.label);
-      rice.body.setRectangle(40, 40);
+      rice.body.setRectangle(100, 100);
       rice.name = 'carb'
       rice.carbs = image.carbs;
-      rice.width = 40;
-      rice.height = 40;
+      rice.width = 100;
+      rice.height = 100;
       rice.body.setCollisionGroup(carbsCollisionGroup);
       rice.body.collides([nonCarbsCollisionGroup, carbsCollisionGroup, playerCollisionGroup, carbonatorCollisionGroup]);
     }
