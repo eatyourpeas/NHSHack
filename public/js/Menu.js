@@ -78,7 +78,7 @@ Game.Menu.prototype = {
 
 			setTimeout(function(){
 				console.log("go to next level: levelProgress+1");
-				that.state.start('One');
+				that.state.start('Three');
 			}, 500);
 		}, this);
 		move.start();
