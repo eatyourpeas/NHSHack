@@ -45,7 +45,7 @@ Game.Boot.prototype = {
 			fill: '#ffffff',
 			font: '34pt Arial'
 		});
-		var introtext = game.add.text(this.world.width/2, 100, 'Help Jamie the Space Giraffe through the Milky Way... \nWatch out for Captian Ketone', {
+		var introtext = game.add.text(this.world.width/2, 100, 'Help Jamie the Space Giraffe through the Milky Way... \nWatch out for Captain Ketone', {
 			fill: '#ffffff',
 			font: '24pt Arial',
 			wordWrap: true,
