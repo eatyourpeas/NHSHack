@@ -64,6 +64,7 @@ Game.Three.prototype.preload = function() {
   this.load.image('banana', 'banana.png');
   this.load.image('sausage', 'sausage.png');
 }
+
 var carbCount;
 var CarbCountTween;
 var score = 0;
@@ -403,6 +404,9 @@ var hitPanda = debounce(function(body1, body2) {
 }, 10)
 
 Game.Three.prototype.update = function() {
+
+  ship.alpha = Math.min(1/bsLevel, 1)
+
   stateText.setText(score+' g');
   graphics.clear();
   graphics.lineStyle(shield ? 8 : 0, 0xCDCEE9);
