@@ -14,8 +14,8 @@ app.get('/', function(req, res) {
   });
 });
 
-app.get('/two', function(req, res) {
-  Load('views/two.html').then(function(Component) {
+app.get('/invaders', function(req, res) {
+  Load('views/invaders.html').then(function(Component) {
     var ractive = new Component({
       data: {}
     });
