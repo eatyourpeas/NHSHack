@@ -1,0 +1,8 @@
+{
+  "name" : "nhsHack",
+  "dependencies":{
+    "mongojs": "0.18.x",
+    "express": "4.12.x",
+    "ractive-load":"0.5.x"
+  }
+}
