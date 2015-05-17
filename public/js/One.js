@@ -1,8 +1,10 @@
+(function(Game){
 Game.One = function(game) {};
 
 var points = 0;
 var game = Game.One;
 Game.One.prototype.preload = function() {
+  var game = this;
 
   game.load.image('stars', 'starfield.jpg');
   game.load.image('ship', 'player.png');
@@ -39,6 +41,7 @@ var carbonator;
 var starfield;
 
 Game.One.prototype.create = function() {
+  var game = this;
 
   var carbImages = [{
     label: 'rice',
@@ -194,3 +197,4 @@ Game.One.prototype.update = function() {
 
 
 }
+})(Game);
