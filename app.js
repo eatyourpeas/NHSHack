@@ -2,11 +2,14 @@ var app = require('express')();
 var bodyParser = require('body-parser');
 var Load = require('ractive-load');
 var mongojs = require('mongojs');
+var favicon = require('serve-favicon');
 
 var db = mongojs('localhost', ['diabeaters']);
 
 app.use(require('express').static(process.cwd() + '/public'));
 app.use(bodyParser.urlencoded({ extended: false}));
+
+app.use(favicon(__dirname + '/public/assets/favicon.ico'));
 
 app.get('/', function(req, res) {
   Load('views/index.html').then(function(Component) {

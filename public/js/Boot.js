@@ -67,6 +67,9 @@ Game.Boot.prototype = {
 		this.load.image('stars', 'starfield.jpg');
 		this.load.image('commander', 'commanderkeytone.png');
 		this.load.image('pig', 'pig.png');
+		this.load.image('nhshackday', 'assets/nhshackdaythirdlogo.png');
+		this.load.image('github', 'assets/githublogo.png');
+		this.load.image('carbsandcals', 'assets/carbsandcalslogo.png');
 		this.load.audio('music', 'music.mp3');
 
 	},
@@ -89,8 +92,8 @@ Game.Boot.prototype = {
 
 
 
-		this.add.image(this.world.width/2, 250, 'commander');
-		var entertext = game.add.text(this.world.width/2, 550, 'Press ENTER or click to continue', {
+		this.add.image(this.world.width/2, 225, 'commander');
+		var entertext = game.add.text(this.world.width/2 - 200, 550, 'Press ENTER or click to continue', {
 			fill: '#ffffff',
 			font: '16pt Arial',
 		});
@@ -108,6 +111,9 @@ Game.Boot.prototype = {
 		var music = this.add.audio('music');
 		music.loop = true;
 		music.play();
+
+		this.add.image(this.world.width - 325,this.world.height - 100, 'nhshackday');
+		this.add.image(10,this.world.height - 50, 'carbsandcals');
 	},
 
 	update: function(){
