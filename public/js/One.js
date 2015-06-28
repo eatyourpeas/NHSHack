@@ -31,6 +31,7 @@
     game.load.image('banana', 'banana.png');
     game.load.image('sausage', 'sausage.png');
 
+
   }
 
   var sprite;
@@ -70,7 +71,7 @@
       label: 'crisps',
       carbs: 0
     }];
-    var nonCarbImages = ['orange', 'salad', 'fish', 'borccoli', 'eggs', 'cheese', 'banana', 'sausage'];
+    var nonCarbImages = ['orange', 'salad', 'fish', 'broccoli', 'eggs', 'cheese', 'banana', 'sausage'];
 
 
 
@@ -182,6 +183,7 @@
   }
 
   Game.One.prototype.update = function() {
+
 
     ship.body.setZeroVelocity();
 

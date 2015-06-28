@@ -2,7 +2,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Phaser Example Runner</title>
+  <title>Diab-eaties</title>
   <meta name="viewport" content="initial-scale=1 maximum-scale=1 user-scalable=0 minimal-ui">
   <script src="http://examples.phaser.io/_site/js/jquery-2.0.3.min.js" type="text/javascript"></script>
   <script src="http://examples.phaser.io/_site/phaser/phaser.2.3.0.min.js" type="text/javascript"></script>
@@ -19,11 +19,11 @@
       background-color: #000000;
       color: #fff;
     }
-  </style>
 </head>
+  </style>
 
 <body>
-  <div id="phaser-example">
+  <div id="jamie_giraffe">
 
   </div>
 
@@ -32,7 +32,7 @@
     var test;
     var points = 0;
 
-    var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', {
+    var game = new Phaser.Game(800, 600, Phaser.AUTO, 'jamie_giraffe', {
       preload: preload,
       create: create,
       update: update
@@ -46,22 +46,22 @@
 
       //CARBS
       game.load.image('rice', 'rice.png');
-      game.load.image('peanut', 'peanut.png');
+      game.load.image('orange', 'orange.png');
       game.load.image('cornflakes', 'cornflakes.png');
       game.load.image('pasta', 'pasta.png');
       game.load.image('corn', 'corn.png');
       game.load.image('bread', 'bread.png');
       game.load.image('cake', 'cake.png');
       game.load.image('crisps', 'crisps.png');
+      game.load.image('banana', 'banana.png');
 
       //NONCARBS
-      game.load.image('orange', 'orange.png');
+      game.load.image('peanut', 'peanut.png');
       game.load.image('salad', 'salad.png');
       game.load.image('fish', 'fish.png');
       game.load.image('broccoli', 'broccoli.png');
       game.load.image('cheese', 'cheese.png');
       game.load.image('eggs', 'eggs.png');
-      game.load.image('banana', 'banana.png');
       game.load.image('sausage', 'sausage.png');
     }
 
@@ -78,8 +78,11 @@
       var carbImages = [{
         label: 'rice',
         carbs: 0
-      }, {
-        label: 'peanut',
+      },  {
+        label: 'orange'
+        carbs: 0
+      },  {
+        label: 'banana'
         carbs: 0
       }, {
         label: 'cornflakes',
@@ -100,7 +103,7 @@
         label: 'crips',
         carbs: 0
       }];
-      var nonCarbImages = ['orange', 'salad', 'fish', 'borccoli', 'eggs', 'cheese', 'banana', 'sausage'];
+      var nonCarbImages = ['salad', 'fish', 'broccoli', 'eggs', 'cheese', 'sausage', 'peanut'];
 
 
 

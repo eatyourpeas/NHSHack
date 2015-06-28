@@ -1,4 +1,6 @@
 var Game = {};
+//var counter = 0;
+var playmusic = true;
 
 var showInstructions = function(text, callback){
 
@@ -9,7 +11,11 @@ var showInstructions = function(text, callback){
 		wordWrap: true,
 		wordWrapWidth: 500,
 	});
+	
 	entertext.visible = false;
+	entertext.inputEnabled = true;
+	
+
 	var tween = this.add.tween(pig).to({x: 0}, 200);
 	tween.onComplete.add(function(){
 		entertext.visible = true
@@ -61,6 +67,8 @@ Game.Boot.prototype = {
 		this.load.image('stars', 'starfield.jpg');
 		this.load.image('commander', 'commanderkeytone.png');
 		this.load.image('pig', 'pig.png');
+		this.load.audio('music', 'music.mp3');
+
 	},
 
 	create: function(){
@@ -79,15 +87,34 @@ Game.Boot.prototype = {
 			wordWrapWidth: this.world.width/2,
 		});
 
+
+
 		this.add.image(this.world.width/2, 250, 'commander');
-		var entertext = game.add.text(this.world.width/2, 550, 'Press ENTER to continue', {
+		var entertext = game.add.text(this.world.width/2, 550, 'Press ENTER or click to continue', {
 			fill: '#ffffff',
 			font: '16pt Arial',
 		});
 
+		game.input.onTap.addOnce(function(){ // click to continue
+					game.state.start('Menu');
+				},this);
+
 		var enterKey = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
+		
 		enterKey.onUp.add(function(){
 			this.state.start('Menu');
 		}, this);
+
+		var music = this.add.audio('music');
+		music.loop = true;
+		music.play();
 	},
+
+	update: function(){
+		
+		var music = this.add.audio('music');
+		music.mute = !playmusic;
+	},
+
+	
 };
